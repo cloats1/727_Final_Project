@@ -53,16 +53,29 @@ Note that compiled term paper (the PDF) is supposed to be more text-centered tha
 
 This section describes the data sources and the data gathering process.
 The COVIDcast package from the Delphi group at Carnegie Mellon University contains data from 19 sources called signals within the package. Each of these signals represent different sources like the COVID-19 Trends and Impact Facebook survey, the CDC, and others. Within those sources there are many variables represented. I wanted to look at proportions of people with COVID-19, both from PCR test results and also estimates from the facebook survey. Beyond that I wanted to see the differences in the data for variables that showed potential exposure. For the first of those variables I wanted to look at estimated use of public transit. The thought here is that being in tight confined spaces, especially in the first year of the pandemic, would increase your risk of catching COVID-19.
+The COVIDcast data was accessed using their API and the COVIDcast R package. With the package you select a data source, a signal within that data source, a time period, and a geographic location. For all of my variables I looked at both Prince George's and Montgomery counties. In addition I looked at the time period of October 1st to December 31st. I chose this time period because I wanted to see how the data compared in the period before vaccines were made available to the public. 
 ```{r}
-#census code chunk that is failing
-#cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
-#census_pg <- getCensus(name = "acs/acs5",
-                   # vintage = 2020, 
-                  #  vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
-                   # region = "county:*", 
-                  #  region = "state:24+county:033",
-                   # key = cs_key)
-#head(census_pg)
+cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
+census_pg <- getCensus(name = "acs/acs5",
+                    vintage = 2020, 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
+                    region = "county:033", 
+                   regionin = "state:24",
+                    key = cs_key)
+census_pg <-
+  census_pg %>%
+  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E)
+knitr::kable(head(census_pg), caption = "Census data for Prince George's County")
+census_moco <- getCensus(name = "acs/acs5",
+                    vintage = 2020, 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
+                    region = "county:031", 
+                   regionin = "state:24",
+                    key = cs_key)
+census_moco <-
+  census_moco %>%
+  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E)
+knitr::kable(head(census_moco), caption = "Census data for Montgomery County")
 ```
 
 ```{r}
@@ -74,11 +87,16 @@ moco_fips <- name_to_fips("Montgomery", state = "MD")
 pg_pcr_pos <- covidcast_signal(data_source = "covid-act-now", signal = "pcr_specimen_positivity_rate",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-#knitr::kable(head(pg_pcr_pos))
+#knitr::kable(head(pg_pcr_pos),)
 moco_pcr_pos <- covidcast_signal(data_source = "covid-act-now", signal = "pcr_specimen_positivity_rate",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
 #knitr::kable(head(moco_pcr_pos))
+
+```
+
+```{r, include = FALSE}
+# Additional code chunks that repeat tasks or do basic things can be hidden
 #code to find the estimated proportion of people with covid-like illnesses from the 
 #COVID-19 Trends and Impacts survey "Estimated percentage of people with COVID-like illness"
 pg_fb_pos <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wcli",
@@ -152,10 +170,6 @@ moco_hhs_hospital <- covidcast_signal(data_source = "hospital-admissions", signa
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
 #knitr::kable(head(moco_hhs_hospital))
-```
-
-```{r, include = FALSE}
-# Additional code chunks that repeat tasks or do basic things can be hidden
 ```
 
 ## Results
@@ -263,7 +277,7 @@ anxious_pg <- pg_fb_anxious %>%
 anxious_moco <- moco_fb_anxious %>%
   group_by(time_value, value)
 anxious <- ggplot()+geom_line(data=anxious_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=anxious_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Felt Anxious Over the Past 5 Days")
+  geom_line(data=anxious_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Felt Anxious \nOver the Past 5 Days")
 anxious
 ```
 ```{r}
@@ -272,7 +286,7 @@ mask_pg <- pg_fb_mask %>%
 mask_moco <- moco_fb_mask %>%
   group_by(time_value, value)
 mask <- ggplot()+geom_line(data=mask_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=mask_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Masked for Most of the Past 5 Days")
+  geom_line(data=mask_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Masked for Most \nof the Past 5 Days")
 mask
 ```
 ```{r}
@@ -281,7 +295,7 @@ out_pg <- pg_fb_out %>%
 out_moco <- moco_fb_out %>%
   group_by(time_value, value)
 out <- ggplot()+geom_line(data=out_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=out_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who Worked/Went to School Outside their Home")
+  geom_line(data=out_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who Worked or Went to School \nOutside their Home")
 out
 ```
 ```{r}
@@ -290,8 +304,8 @@ money_pg <- pg_fb_money %>%
 money_moco <- moco_fb_money %>%
   group_by(time_value, value)
 money <- ggplot()+geom_line(data=money_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=money_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who are Worried about their Finaces Next Month")
-out
+  geom_line(data=money_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who are Worried \nabout their Finaces Next Month")
+money
 ```
 ```{r}
 hospitals_pg <- pg_hhs_hospital %>%
@@ -299,7 +313,7 @@ hospitals_pg <- pg_hhs_hospital %>%
 hospitals_moco <- moco_hhs_hospital %>%
   group_by(time_value, value)
 hospitals <- ggplot()+geom_line(data=hospitals_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=hospitals_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of New Hospital Admissions with COVID-Associated Diagnoses")
+  geom_line(data=hospitals_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of New Hospital Admissions with \nCOVID-Associated Diagnoses")
 hospitals
 ```
 
