@@ -116,6 +116,33 @@ moco_jhu_deaths <- covidcast_signal(data_source = "jhu-csse", signal = "deaths_c
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
 knitr::kable(head(moco_jhu_deaths))
+#Estimated percentage of people who wore a mask for most or all of the time while in public in the past 5 days; those not in public in the past 5 days are not counted.
+pg_fb_mask <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwearing_mask",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_fb_mask))
+moco_fb_mask <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwearing_mask",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_fb_mask))
+#Estimated percentage of respondents who worked or went to school outside their home in the past 24 hours 
+pg_fb_out <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwork_outside_home_1d",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_fb_out))
+moco_fb_out <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwork_outside_home_1d",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_fb_out))
+#Estimated percentage of respondents who report being very or somewhat worried about their “household’s finances for the next month” 
+pg_fb_money <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wworried_finances",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_fb_money))
+moco_fb_money <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wworried_finances",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_fb_money))
 ```
 
 ```{r, include = FALSE}
@@ -150,7 +177,7 @@ pos_pg <- pg_pcr_pos %>%
 pos_moco <- moco_pcr_pos %>%
   group_by(time_value, value)
 pos <- ggplot()+geom_line(data=pos_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=pos_moco, aes(time_value,value), color="black")
+  geom_line(data=pos_moco, aes(time_value,value), color="black") + labs(title= "PCR Positive Test Proportion Over Time")
 pos
 
 ```
@@ -162,12 +189,65 @@ fb_pg <- pg_fb_pos %>%
 fb_moco <- moco_fb_pos %>%
   group_by(time_value, value)
 pos_fb <- ggplot()+geom_line(data=fb_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=fb_moco, aes(time_value,value), color="black")
+  geom_line(data=fb_moco, aes(time_value,value), color="black") + labs(title= "Estimated Proportion of People with COVID-like Illnesses")
 pos_fb
 ```
 
 ```{r}
 # What happens here depends on the specific project
+bus_pg <- pg_fb_bus %>%
+  group_by(time_value, value)
+bus_moco <- moco_fb_bus %>%
+  group_by(time_value, value)
+bus <- ggplot()+geom_line(data=bus_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=bus_moco, aes(time_value,value), color="black") + labs(title= "Percentage of Respondents Who Used Public Transit in the Past 24 Hours")
+bus
+```
+```{r}
+anxious_pg <- pg_fb_anxious %>%
+  group_by(time_value, value)
+anxious_moco <- moco_fb_anxious %>%
+  group_by(time_value, value)
+anxious <- ggplot()+geom_line(data=anxious_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=anxious_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Felt Anxious Over the Past 5 Days")
+anxious
+```
+```{r}
+mask_pg <- pg_fb_mask %>%
+  group_by(time_value, value)
+mask_moco <- moco_fb_mask %>%
+  group_by(time_value, value)
+mask <- ggplot()+geom_line(data=mask_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=mask_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Masked for Most of the Past 5 Days")
+mask
+```
+```{r}
+out_pg <- pg_fb_out %>%
+  group_by(time_value, value)
+out_moco <- moco_fb_out %>%
+  group_by(time_value, value)
+out <- ggplot()+geom_line(data=out_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=out_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who Worked/Went to School Outside their Home")
+out
+```
+```{r}
+money_pg <- pg_fb_money %>%
+  group_by(time_value, value)
+money_moco <- moco_fb_money %>%
+  group_by(time_value, value)
+money <- ggplot()+geom_line(data=money_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=money_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who are Worried about their Finaces Next Month")
+out
+```
+
+```{r}
+deaths_pg <- pg_jhu_deaths %>%
+  group_by(time_value, value)
+deaths_moco <- moco_jhu_deaths %>%
+  group_by(time_value, value)
+deaths <- ggplot()+geom_line(data=deaths_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=deaths_moco, aes(time_value,value), color="black") + labs(title= "Cumulative number of confirmed deaths due to COVID-19")
+deaths
 ```
 
 ## Discussion
