@@ -55,14 +55,14 @@ This section describes the data sources and the data gathering process.
 The COVIDcast package from the Delphi group at Carnegie Mellon University contains data from 19 sources called signals within the package. Each of these signals represent different sources like the COVID-19 Trends and Impact Facebook survey, the CDC, and others. Within those sources there are many variables represented. I wanted to look at proportions of people with COVID-19, both from PCR test results and also estimates from the facebook survey. Beyond that I wanted to see the differences in the data for variables that showed potential exposure. For the first of those variables I wanted to look at estimated use of public transit. The thought here is that being in tight confined spaces, especially in the first year of the pandemic, would increase your risk of catching COVID-19.
 ```{r}
 #census code chunk that is failing
-cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
-census_pg <- getCensus(name = "acs/acs5",
-                    vintage = 2020, 
-                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
+#cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
+#census_pg <- getCensus(name = "acs/acs5",
+                   # vintage = 2020, 
+                  #  vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
                    # region = "county:*", 
-                    region = "state:24+county:033",
-                    key = cs_key)
-head(census_pg)
+                  #  region = "state:24+county:033",
+                   # key = cs_key)
+#head(census_pg)
 ```
 
 ```{r}
@@ -143,6 +143,15 @@ moco_fb_money <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
 knitr::kable(head(moco_fb_money))
+#Estimated percentage of new hospital admissions with COVID-associated diagnoses, based on claims data from health system partners, smoothed in time using a Gaussian linear smoother .  
+pg_hhs_hospital <- covidcast_signal(data_source = "hospital-admissions", signal = "smoothed_covid19_from_claims",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_hhs_hospital))
+moco_hhs_hospital <- covidcast_signal(data_source = "hospital-admissions", signal = "smoothed_covid19_from_claims",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_hhs_hospital))
 ```
 
 ```{r, include = FALSE}
@@ -238,6 +247,15 @@ money_moco <- moco_fb_money %>%
 money <- ggplot()+geom_line(data=money_pg, aes(time_value,value), color="blue") + 
   geom_line(data=money_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who are Worried about their Finaces Next Month")
 out
+```
+```{r}
+hospitals_pg <- pg_hhs_hospital %>%
+  group_by(time_value, value)
+hospitals_moco <- moco_hhs_hospital %>%
+  group_by(time_value, value)
+hospitals <- ggplot()+geom_line(data=hospitals_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=hospitals_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of New Hospital Admissions with COVID-Associated Diagnoses")
+hospitals
 ```
 
 ```{r}
