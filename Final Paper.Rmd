@@ -74,84 +74,84 @@ moco_fips <- name_to_fips("Montgomery", state = "MD")
 pg_pcr_pos <- covidcast_signal(data_source = "covid-act-now", signal = "pcr_specimen_positivity_rate",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_pcr_pos))
+#knitr::kable(head(pg_pcr_pos))
 moco_pcr_pos <- covidcast_signal(data_source = "covid-act-now", signal = "pcr_specimen_positivity_rate",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_pcr_pos))
+#knitr::kable(head(moco_pcr_pos))
 #code to find the estimated proportion of people with covid-like illnesses from the 
 #COVID-19 Trends and Impacts survey "Estimated percentage of people with COVID-like illness"
 pg_fb_pos <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wcli",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_fb_pos))
+#knitr::kable(head(pg_fb_pos))
 moco_fb_pos <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wcli",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_fb_pos))
+#knitr::kable(head(moco_fb_pos))
 #code looking at "Estimated percentage of respondents who “used public transit” in the past 24 hours"
 pg_fb_bus <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wpublic_transit_1d",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_fb_bus))
+#knitr::kable(head(pg_fb_bus))
 moco_fb_bus <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wpublic_transit_1d",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_fb_bus))
+#knitr::kable(head(moco_fb_bus))
 #looking at "Estimated percentage of respondents who reported feeling “nervous, anxious, or on edge” for most or all of the past 5 days"
 pg_fb_anxious <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wanxious_5d",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_fb_anxious))
+#knitr::kable(head(pg_fb_anxious))
 moco_fb_anxious <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wanxious_5d",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_fb_anxious))
+#knitr::kable(head(moco_fb_anxious))
 #looking at "Cumulative number of confirmed deaths due to COVID-19" from the JHU data
 pg_jhu_deaths <- covidcast_signal(data_source = "jhu-csse", signal = "deaths_cumulative_num",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_jhu_deaths))
+#knitr::kable(head(pg_jhu_deaths))
 moco_jhu_deaths <- covidcast_signal(data_source = "jhu-csse", signal = "deaths_cumulative_num",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_jhu_deaths))
+#knitr::kable(head(moco_jhu_deaths))
 #Estimated percentage of people who wore a mask for most or all of the time while in public in the past 5 days; those not in public in the past 5 days are not counted.
 pg_fb_mask <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwearing_mask",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_fb_mask))
+#knitr::kable(head(pg_fb_mask))
 moco_fb_mask <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwearing_mask",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_fb_mask))
+#knitr::kable(head(moco_fb_mask))
 #Estimated percentage of respondents who worked or went to school outside their home in the past 24 hours 
 pg_fb_out <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwork_outside_home_1d",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_fb_out))
+#knitr::kable(head(pg_fb_out))
 moco_fb_out <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wwork_outside_home_1d",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_fb_out))
+#knitr::kable(head(moco_fb_out))
 #Estimated percentage of respondents who report being very or somewhat worried about their “household’s finances for the next month” 
 pg_fb_money <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wworried_finances",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_fb_money))
+#knitr::kable(head(pg_fb_money))
 moco_fb_money <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wworried_finances",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_fb_money))
+#knitr::kable(head(moco_fb_money))
 #Estimated percentage of new hospital admissions with COVID-associated diagnoses, based on claims data from health system partners, smoothed in time using a Gaussian linear smoother .  
 pg_hhs_hospital <- covidcast_signal(data_source = "hospital-admissions", signal = "smoothed_covid19_from_claims",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = pg_fips)
-knitr::kable(head(pg_hhs_hospital))
+#knitr::kable(head(pg_hhs_hospital))
 moco_hhs_hospital <- covidcast_signal(data_source = "hospital-admissions", signal = "smoothed_covid19_from_claims",
                         start_day = "2020-10-01", end_day = "2020-12-31",
                         geo_type = "county", geo_value = moco_fips)
-knitr::kable(head(moco_hhs_hospital))
+#knitr::kable(head(moco_hhs_hospital))
 ```
 
 ```{r, include = FALSE}
@@ -168,6 +168,51 @@ The results section may have a data exploration part, but in general the structu
 
 ```{r}
 # What happens here depends on the specific project
+#Data of PCR Positive Test Proportion
+vis_pg_pcr_pos <- pg_pcr_pos %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_pcr_pos),caption = "Proportion of PCR Positive Tests for Prince George's County")
+vis_moco_pcr_pos <- moco_pcr_pos %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_pcr_pos),caption = "Proportion of PCR Positive Tests for Montgomery County")
+#Estimated proportion of individuals with COVID-19
+vis_pg_fb_pos <- pg_fb_pos %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_fb_pos),caption = "Estimated proportion of individuals with COVID-19 for Prince George's County")
+vis_moco_fb_pos <- moco_fb_pos %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_fb_pos),caption = "Estimated proportion of individuals with COVID-19 for Montgomery County")
+#Estimated percentage of people who used public transit in the past day
+vis_pg_fb_bus <- pg_fb_bus %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_fb_bus),caption = "Estimated percentage of people who used public transit in the past day for Prince George's County")
+vis_moco_fb_bus <- moco_fb_bus %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_fb_bus),caption = "Estimated percentage of people who used public transit in the past day for Montgomery County")
+#Estimated percentage of people who felt anxious within the past 5 days
+vis_pg_fb_anxious <- pg_fb_anxious %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_fb_anxious),caption = "Estimated percentage of people who felt anxious within the past 5 days for Prince George's County")
+vis_moco_fb_anxious <- moco_fb_anxious %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_fb_anxious),caption = "Estimated percentage of people who felt anxious within the past 5 days for Montgomery County")
+#Estimated percentage of people who masked most of the time in the past 5 days
+vis_pg_fb_mask <- pg_fb_mask %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_fb_mask),caption = "Estimated percentage of people who masked most of the time in the past 5 days for Prince George's County")
+vis_moco_fb_mask <- moco_fb_mask %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_fb_mask),caption = "Estimated percentage of people who masked most of the time in the past 5 days for Montgomery County")
+#Estimated percentage of respondents who worked or went to school outside their home in the past 24 hours 
+vis_pg_fb_out <- pg_fb_out %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_fb_out),caption = "Estimated percentage of respondents who worked or went to school outside their home in the past 24 hours for Prince George's County")
+vis_moco_fb_out <- moco_fb_out %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_fb_out),caption = "Estimated percentage of respondents who worked or went to school outside their home in the past 24 hours for Montgomery County")
+#Estimated percentage of respondents who report being very or somewhat worried about their “household’s finances for the next month” 
+vis_pg_fb_money <- pg_fb_money %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_fb_out),caption = "Estimated percentage of respondents who report being very or somewhat worried about their “household’s finances for the next month for Prince George's County")
+vis_moco_fb_money <- moco_fb_money %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_fb_money),caption = "Estimated percentage of respondents who report being very or somewhat worried about their “household’s finances for the next month for Montgomery County")
+#Estimated percentage of new hospital admissions with COVID-associated diagnoses, based on claims data from health system partners, smoothed in time using a Gaussian linear smoother .  
+vis_pg_hhs_hospital <- pg_hhs_hospital %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_hhs_hospital),caption = "Estimated percentage of new hospital admissions with COVID-associated diagnoses for Prince George's County")
+vis_moco_hhs_hospital <- moco_hhs_hospital %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_hhs_hospital),caption = "Estimated percentage of new hospital admissions with COVID-associated diagnoses for Montgomery County")
+#looking at "Cumulative number of confirmed deaths due to COVID-19" from the JHU data
+vis_pg_jhu_deaths <- pg_jhu_deaths %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_pg_jhu_deaths),caption = "Cumulative number of confirmed deaths due to COVID-19 for Prince George's County")
+vis_moco_jhu_deaths <- moco_jhu_deaths %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+knitr::kable(head(vis_moco_jhu_deaths),caption = "Cumulative number of confirmed deaths due to COVID-19 for Montgomery County")
 ```
 
 ```{r}
