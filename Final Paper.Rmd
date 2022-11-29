@@ -38,6 +38,9 @@ references:
 ```{r, include = FALSE}
 library(knitr)
 library(tidyverse)
+library(covidcast)
+library(censusapi)
+library(gridExtra)
 ```
 
 ## Introduction
@@ -49,9 +52,70 @@ Note that compiled term paper (the PDF) is supposed to be more text-centered tha
 ## Data
 
 This section describes the data sources and the data gathering process.
+The COVIDcast package from the Delphi group at Carnegie Mellon University contains data from 19 sources called signals within the package. Each of these signals represent different sources like the COVID-19 Trends and Impact Facebook survey, the CDC, and others. Within those sources there are many variables represented. I wanted to look at proportions of people with COVID-19, both from PCR test results and also estimates from the facebook survey. Beyond that I wanted to see the differences in the data for variables that showed potential exposure. For the first of those variables I wanted to look at estimated use of public transit. The thought here is that being in tight confined spaces, especially in the first year of the pandemic, would increase your risk of catching COVID-19.
+```{r}
+#census code chunk that is failing
+cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
+census_pg <- getCensus(name = "acs/acs5",
+                    vintage = 2020, 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
+                   # region = "county:*", 
+                    region = "state:24+county:033",
+                    key = cs_key)
+head(census_pg)
+```
 
 ```{r}
 # A code chunk that exemplifies the data gathering process
+#code to find the FIPS codes for our counties of interest
+pg_fips <- name_to_fips("Prince George's")
+moco_fips <- name_to_fips("Montgomery", state = "MD")
+#code to find the proportion of positive PCR tests for a county within a certain time period
+pg_pcr_pos <- covidcast_signal(data_source = "covid-act-now", signal = "pcr_specimen_positivity_rate",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_pcr_pos))
+moco_pcr_pos <- covidcast_signal(data_source = "covid-act-now", signal = "pcr_specimen_positivity_rate",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_pcr_pos))
+#code to find the estimated proportion of people with covid-like illnesses from the 
+#COVID-19 Trends and Impacts survey "Estimated percentage of people with COVID-like illness"
+pg_fb_pos <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wcli",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_fb_pos))
+moco_fb_pos <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wcli",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_fb_pos))
+#code looking at "Estimated percentage of respondents who “used public transit” in the past 24 hours"
+pg_fb_bus <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wpublic_transit_1d",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_fb_bus))
+moco_fb_bus <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wpublic_transit_1d",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_fb_bus))
+#looking at "Estimated percentage of respondents who reported feeling “nervous, anxious, or on edge” for most or all of the past 5 days"
+pg_fb_anxious <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wanxious_5d",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_fb_anxious))
+moco_fb_anxious <- covidcast_signal(data_source = "fb-survey", signal = "smoothed_wanxious_5d",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_fb_anxious))
+#looking at "Cumulative number of confirmed deaths due to COVID-19" from the JHU data
+pg_jhu_deaths <- covidcast_signal(data_source = "jhu-csse", signal = "deaths_cumulative_num",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = pg_fips)
+knitr::kable(head(pg_jhu_deaths))
+moco_jhu_deaths <- covidcast_signal(data_source = "jhu-csse", signal = "deaths_cumulative_num",
+                        start_day = "2020-10-01", end_day = "2020-12-31",
+                        geo_type = "county", geo_value = moco_fips)
+knitr::kable(head(moco_jhu_deaths))
 ```
 
 ```{r, include = FALSE}
@@ -80,10 +144,26 @@ This section presents the main results, such as (for example) stats and graphs t
 
 ```{r}
 # What happens here depends on the specific project
+#Graph of PCR positive proportion over time for Prince George's County vs Montgomery County
+pos_pg <- pg_pcr_pos %>%
+  group_by(time_value, value)
+pos_moco <- moco_pcr_pos %>%
+  group_by(time_value, value)
+pos <- ggplot()+geom_line(data=pos_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=pos_moco, aes(time_value,value), color="black")
+pos
+
 ```
 
 ```{r}
 # What happens here depends on the specific project
+fb_pg <- pg_fb_pos %>%
+  group_by(time_value, value)
+fb_moco <- moco_fb_pos %>%
+  group_by(time_value, value)
+pos_fb <- ggplot()+geom_line(data=fb_pg, aes(time_value,value), color="blue") + 
+  geom_line(data=fb_moco, aes(time_value,value), color="black")
+pos_fb
 ```
 
 ```{r}
