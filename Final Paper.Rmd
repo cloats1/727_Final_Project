@@ -58,23 +58,23 @@ The COVIDcast data was accessed using their API and the COVIDcast R package. Wit
 cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
 census_pg <- getCensus(name = "acs/acs5",
                     vintage = 2020, 
-                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E","B02001_002E", "B02001_003E", "B03001_003E"), 
                     region = "county:033", 
                    regionin = "state:24",
                     key = cs_key)
 census_pg <-
   census_pg %>%
-  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E)
+  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E, White = B02001_002E, Black = B02001_003E, Latino = B03001_003E)
 knitr::kable(head(census_pg), caption = "Census data for Prince George's County")
 census_moco <- getCensus(name = "acs/acs5",
                     vintage = 2020, 
-                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E"), 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E","B02001_002E", "B02001_003E", "B03001_003E"), 
                     region = "county:031", 
                    regionin = "state:24",
                     key = cs_key)
 census_moco <-
   census_moco %>%
-  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E)
+  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E, White = B02001_002E, Black = B02001_003E, Latino = B03001_003E)
 knitr::kable(head(census_moco), caption = "Census data for Montgomery County")
 ```
 
