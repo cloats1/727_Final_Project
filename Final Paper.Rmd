@@ -231,6 +231,9 @@ knitr::kable(head(vis_moco_jhu_deaths),caption = "Cumulative number of confirmed
 
 ```{r}
 # What happens here depends on the specific project
+#Chi-squared test to determine if the difference between the proportions of the Black population in Prince George's and Montgomery County is statistically significant
+sig <- prop.test(x = c(census_pg$Black, census_moco$Black), n = c(census_pg$pop, census_moco$pop))
+sig
 ```
 
 ### Analysis
