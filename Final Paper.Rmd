@@ -9,11 +9,11 @@ output:
     df_print: kable
 references:
 - id: Gravlee2020
-  title: Systemic racism, chronic health inequities, and COVID-19: A syndemic in the making?
+  title: "Systemic racism, chronic health inequities, and COVID-19: A syndemic in the making?"
   author:
   - family: Gravlee
     given: Clarence C.
-  container-title: American journal of human biology : the official journal of the Human Biology Council
+  container-title: "American journal of human biology: the official journal of the Human Biology Council"
   volume: 32
   issue: 5
   page: 
@@ -34,7 +34,7 @@ references:
   type: article-journal
   issued:
     year: 2020
- - id: Khazanchi2020
+- id: Khazanchi2020
   title: Racism, Not Race, Drives Inequity Across the COVID-19 Continuum
   author:
   - family: Khazanchi
@@ -68,8 +68,6 @@ The time period looked at for this paper is October 1st, 2020 through December 3
 
 ## Data 
 
-The CensusAPI package provides a way to access the Census's API within R. For the purposes of this analysis Census data is used in a supplementary fashion. Population, age and household income were gathered for each county to see how different they were. Beyond that the White, Black and Latino population numbers were gathered. All of these values were put into an R object for statistical manipulation.
-
 The COVIDcast package from the Delphi group at Carnegie Mellon University contains data from 19 sources referred to as signals within the package. Each of these signals represent different sources like the COVID-19 Trends and Impact Facebook survey, the CDC, and others. Within those signals there are many variables represented. For data from the Facebook survey, the smoothed weighted version of a variable was always chosen so as to allow for cross-county comparisons more easily.
 
 I wanted to look at proportions of people with COVID-19, both from PCR test results and also estimates from the Facebook survey. Beyond that I wanted to see the differences in the data for variables that showed potential exposure and also feelings during the pandemic. For the first of those variables I wanted to look at estimated use of public transit. The thought here is that being in tight confined spaces, especially in the first year of the pandemic, would increase your risk of catching COVID-19. How often people felt anxious was looked at from the Facebook survey. This measure was chosen to see if there's a difference in feelings of anxiety between the two counties. Use of masks was looked at as another variable to see potential exposure. Alongside that we also looked at percentage of individuals that had to either work or go to school outside their home. Lastly from the Facebook survey we looked at how many people were worried about their finances. The thought behind all of these is that Prince George's County should, as the county with the higher proportion of Black people and the lower median income, be the county where more people have to go out to work instead of working from home. With that they should use public transit more, be more anxious, and potentially more worried about finances. Masking should be similar between the two counties pre-vaccines but there is a possibility it will be more prevalent in Prince George's County if that county feels like it's being hit harder by COVID-19.
@@ -78,29 +76,7 @@ For more quantitative data I also looked at hospitalization rates and death rate
 
 The COVIDcast data was accessed using their API and the COVIDcast R package. With the package you select a data source, a signal within that data source, a time period, and a geographic location. For all of my variables I looked at both Prince George's and Montgomery counties. In addition I looked at the time period of October 1st to December 31st.
 
-```{r}
-cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
-census_pg <- getCensus(name = "acs/acs5",
-                    vintage = 2020, 
-                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E","B02001_002E", "B02001_003E", "B03001_003E"), 
-                    region = "county:033", 
-                   regionin = "state:24",
-                    key = cs_key)
-census_pg <-
-  census_pg %>%
-  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E, White = B02001_002E, Black = B02001_003E, Latino = B03001_003E)
-knitr::kable(head(census_pg), caption = "Census data for Prince George's County")
-census_moco <- getCensus(name = "acs/acs5",
-                    vintage = 2020, 
-                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E","B02001_002E", "B02001_003E", "B03001_003E"), 
-                    region = "county:031", 
-                   regionin = "state:24",
-                    key = cs_key)
-census_moco <-
-  census_moco %>%
-  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E, White = B02001_002E, Black = B02001_003E, Latino = B03001_003E)
-knitr::kable(head(census_moco), caption = "Census data for Montgomery County")
-```
+The CensusAPI package provides a way to access the Census's API within R. For the purposes of this analysis Census data is used in a supplementary fashion. Population, age and household income were gathered for each county to see how different they were. Beyond that the White, Black and Latino population numbers were gathered. All of these values were put into an R object for statistical manipulation.
 
 ```{r}
 # A code chunk that exemplifies the data gathering process
@@ -185,13 +161,33 @@ moco_jhu_prop <- covidcast_signal(data_source = "jhu-csse", signal = "deaths_cum
                         geo_type = "county", geo_value = moco_fips)
 ```
 
+```{r}
+cs_key <- "1448b92acdfc46410a020ee82b98af8fad7de580"
+census_pg <- getCensus(name = "acs/acs5",
+                    vintage = 2020, 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E","B02001_002E", "B02001_003E", "B03001_003E"), 
+                    region = "county:033", 
+                   regionin = "state:24",
+                    key = cs_key)
+census_pg <-
+  census_pg %>%
+  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E, White = B02001_002E, Black = B02001_003E, Latino = B03001_003E)
+knitr::kable(head(census_pg), caption = "Census data for Prince George's County")
+census_moco <- getCensus(name = "acs/acs5",
+                    vintage = 2020, 
+                    vars = c("NAME", "B01001_001E", "B06002_001E", "B19013_001E", "B19301_001E","B02001_002E", "B02001_003E", "B03001_003E"), 
+                    region = "county:031", 
+                   regionin = "state:24",
+                    key = cs_key)
+census_moco <-
+  census_moco %>%
+  rename(pop = B01001_001E, age = B06002_001E, hh_income = B19013_001E, income = B19301_001E, White = B02001_002E, Black = B02001_003E, Latino = B03001_003E)
+knitr::kable(head(census_moco), caption = "Census data for Montgomery County")
+```
+
 ## Results
 
-This section presents the main results.
-
 ### Data exploration
-
-The results section may have a data exploration part, but in general the structure here depends on the specific project.
 
 Shown below is a table of the first six results from one of each of the four different data sources used from the COVIDcast package. The tables have been trimmed for ease of reading to include only the data source, the signal from within the source, the county FIPS code (geo_value), date (time_value), value being measured, and sample size. The values from covid-act-now are represented as proportions. Data from fb-survey and hospital-admissions is shown as a percentage. Lastly the data from jhu-csse is represented as individuals.
 
@@ -246,6 +242,29 @@ vis_moco_fb_pos <- moco_fb_pos %>% select(data_source ,signal, geo_value, time_v
 knitr::kable(head(vis_moco_fb_pos),caption = "Estimated proportion of individuals with COVID-19 for Montgomery County")
 ```
 
+```{r}
+combo_pg_census <- census_pg %>% 
+  select(pop,White,Black,Latino) %>%
+  mutate(prop_white=White/pop, 
+       prop_black=Black/pop,
+       prop_latino=Latino/pop) %>%
+  select(prop_white, prop_black, prop_latino) %>%
+  gather(key="Race", value= "population")
+
+combo_moco_census <-census_moco %>%
+  select(pop,White,Black,Latino) %>%
+    mutate(prop_white=White/pop, 
+       prop_black=Black/pop,
+       prop_latino=Latino/pop) %>%
+  select(prop_white, prop_black, prop_latino) %>%
+  gather(key="Race", value= "population") 
+census_race_1 <- ggplot() + geom_bar(data=combo_pg_census, aes(Race, population),fill="blue", stat="identity")
+census_race_1
+census_race_2 <- ggplot() + geom_bar(data=combo_moco_census, aes(Race, population),fill="black", stat="identity")
+census_race_2
+```
+
+
 The Census ACS 2020 data provides data on racial makeup of each of our counties. For this study we looked at White, Black and Latino. A chi-squared test was performed for each pair or proportions to test equality. All three were statistically significantly not equal but the Latino difference was much less extreme. The proportions there were approximately 18.8% for Prince George's County and 19.5% for Montgomery County. On the other hand the proportion of Prince George's County that is Black is approximately 62.2% and for Montgomery County it is only 18.5%. Such a difference could very well be an explanation for why COVID-19 impacts Prince George's County differently than Montgomery County.
 
 ```{r}
@@ -258,8 +277,28 @@ sig2
 sig3 <- prop.test(x = c(census_pg$White, census_moco$White), n = c(census_pg$pop, census_moco$pop))
 sig3
 ```
+The data from the Census needs to be adjusted to proportions in order to properly compare it across counties and the following code does that.
+```{r}
+census_pg_prop <- census_pg %>%
+  select(pop,White,Black,Latino) %>%
+mutate(prop_white=White/pop, 
+       prop_black=Black/pop,
+       prop_latino=Latino/pop)
+census_moco_prop <- census_moco %>%
+  select(pop,White,Black,Latino) %>%
+mutate(prop_white=White/pop, 
+       prop_black=Black/pop,
+       prop_latino=Latino/pop)
+```
+
 
 ### Analysis
+
+```{r}
+census_race <- ggplot() + geom_bar(data=census_pg_prop, aes(prop_white),color="blue") + geom_bar(data=census_pg_prop, aes(prop_black),color="blue") + geom_bar(data=census_pg_prop, aes(prop_latino),color="blue") + geom_bar(data=census_moco_prop, aes(prop_white),color="black") + geom_bar(data=census_moco_prop, aes(prop_black),color="black") + geom_bar(data=census_moco_prop, aes(prop_latino),color="black") +coord_flip()
+census_race
+```
+
 
 For all of the gathered variables I looked at the rate of them over time compared between the two counties. The Facebook survey data as a whole tends to look more erratic than the other data sources. This is most likely a result of how the survey was conducted and the estimation process used for the data.
 
