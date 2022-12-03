@@ -421,6 +421,6 @@ For the time period of October 1st, 2020 through December 31st, 2020 we see the 
 
 A limitation of this paper is that the data used from the Facebook survey does not provide exactly what is needed in order to make anything stronger than inferences. While the residents in Prince George's county were more worried about finances consistently than those in Montgomery, for every other metric looked at the differences were either much smaller or varied between which county had a higher percentage. 
 
-
+Code is available in a git-hub repo at https://github.com/cloats1/727_Final_Project 
 
 ## References
