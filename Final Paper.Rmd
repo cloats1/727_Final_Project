@@ -242,30 +242,31 @@ vis_moco_fb_pos <- moco_fb_pos %>% select(data_source ,signal, geo_value, time_v
 knitr::kable(head(vis_moco_fb_pos),caption = "Estimated proportion of individuals with COVID-19 for Montgomery County")
 ```
 
+The Census ACS 2020 data provides data on racial makeup of each of our counties. For this study we looked at White, Black and Latino. In order to see the difference in racial proportions across counties the data needed to be combined and reshaped. After this reshaping we can see in the bar graph below that the proportion of Latino population is similar between the counties. But the relative proportions of Black and White populations differs significantly.
+
 ```{r}
 combo_pg_census <- census_pg %>% 
-  select(pop,White,Black,Latino) %>%
+  select(NAME,pop,White,Black,Latino) %>%
   mutate(prop_white=White/pop, 
        prop_black=Black/pop,
-       prop_latino=Latino/pop) %>%
-  select(prop_white, prop_black, prop_latino) %>%
-  gather(key="Race", value= "population")
-
+       prop_latino=Latino/pop)
 combo_moco_census <-census_moco %>%
-  select(pop,White,Black,Latino) %>%
+  select(NAME,pop,White,Black,Latino) %>%
     mutate(prop_white=White/pop, 
        prop_black=Black/pop,
-       prop_latino=Latino/pop) %>%
-  select(prop_white, prop_black, prop_latino) %>%
-  gather(key="Race", value= "population") 
-census_race_1 <- ggplot() + geom_bar(data=combo_pg_census, aes(Race, population),fill="blue", stat="identity")
-census_race_1
-census_race_2 <- ggplot() + geom_bar(data=combo_moco_census, aes(Race, population),fill="black", stat="identity")
-census_race_2
+       prop_latino=Latino/pop) 
+combo_census <- full_join(combo_pg_census, combo_moco_census, by = c("NAME","pop","White","Black", "Latino","prop_white", "prop_black", "prop_latino") )
+combo_census_race <- combo_census %>%
+  select(NAME, prop_white, prop_black, prop_latino) %>%
+  gather(key="race", value="proportion", 2:4) %>%
+  rename(County=NAME)
+combo_census_race
+census_race <- ggplot() + geom_bar(data=combo_census_race, aes(race, proportion, fill=County), stat="identity", position="dodge") 
+census_race
 ```
 
 
-The Census ACS 2020 data provides data on racial makeup of each of our counties. For this study we looked at White, Black and Latino. A chi-squared test was performed for each pair or proportions to test equality. All three were statistically significantly not equal but the Latino difference was much less extreme. The proportions there were approximately 18.8% for Prince George's County and 19.5% for Montgomery County. On the other hand the proportion of Prince George's County that is Black is approximately 62.2% and for Montgomery County it is only 18.5%. Such a difference could very well be an explanation for why COVID-19 impacts Prince George's County differently than Montgomery County.
+A chi-squared test was performed for each pair of proportions to test equality. All three were statistically significantly not equal but the Latino difference was much less extreme. The proportions there were approximately 18.8% for Prince George's County and 19.5% for Montgomery County. On the other hand the proportion of Prince George's County that is Black is approximately 62.2% and for Montgomery County it is only 18.5%. Such a difference could very well be an explanation for why COVID-19 impacts Prince George's County differently than Montgomery County.
 
 ```{r}
 # What happens here depends on the specific project
