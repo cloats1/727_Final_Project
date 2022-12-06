@@ -240,6 +240,71 @@ vis_pg_fb_pos <- pg_fb_pos %>% select(data_source ,signal, geo_value, time_value
 knitr::kable(head(vis_pg_fb_pos),caption = "Estimated proportion of individuals with COVID-19 for Prince George's County")
 vis_moco_fb_pos <- moco_fb_pos %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
 knitr::kable(head(vis_moco_fb_pos),caption = "Estimated proportion of individuals with COVID-19 for Montgomery County")
+
+vis_pg_jhu_prop <- pg_jhu_prop %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+vis_moco_jhu_prop <- moco_jhu_prop %>% select(data_source ,signal, geo_value, time_value,value, sample_size)
+```
+
+```{r, include = FALSE}
+combo_pcr_pos <- full_join(vis_pg_pcr_pos, vis_moco_pcr_pos, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_pcr_pos[combo_pcr_pos==24031] <- "Montgomery County"
+combo_pcr_pos[combo_pcr_pos==24033] <- "Prince George's County"
+combo_pcr_pos <- combo_pcr_pos %>%
+  rename(County=geo_value)
+
+combo_fb_pos <- full_join(vis_pg_fb_pos, vis_moco_fb_pos, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_fb_pos[combo_fb_pos==24031] <- "Montgomery County"
+combo_fb_pos[combo_fb_pos==24033] <- "Prince George's County"
+combo_fb_pos <- combo_fb_pos %>%
+  rename(County=geo_value)
+
+combo_fb_bus <- full_join(vis_pg_fb_bus, vis_moco_fb_bus, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_fb_bus[combo_fb_bus==24031] <- "Montgomery County"
+combo_fb_bus[combo_fb_bus==24033] <- "Prince George's County"
+combo_fb_bus <- combo_fb_bus %>%
+  rename(County=geo_value)
+
+combo_fb_anxious <- full_join(vis_pg_fb_anxious, vis_moco_fb_anxious, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_fb_anxious[combo_fb_anxious==24031] <- "Montgomery County"
+combo_fb_anxious[combo_fb_anxious==24033] <- "Prince George's County"
+combo_fb_anxious <- combo_fb_anxious %>%
+  rename(County=geo_value)
+
+combo_fb_mask <- full_join(vis_pg_fb_mask, vis_moco_fb_mask, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_fb_mask[combo_fb_mask==24031] <- "Montgomery County"
+combo_fb_mask[combo_fb_mask==24033] <- "Prince George's County"
+combo_fb_mask <- combo_fb_mask %>%
+  rename(County=geo_value)
+
+combo_fb_money <- full_join(vis_pg_fb_money, vis_moco_fb_money, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_fb_money[combo_fb_money==24031] <- "Montgomery County"
+combo_fb_money[combo_fb_money==24033] <- "Prince George's County"
+combo_fb_money <- combo_fb_money %>%
+  rename(County=geo_value)
+
+combo_fb_out <- full_join(vis_pg_fb_out, vis_moco_fb_out, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_fb_out[combo_fb_out==24031] <- "Montgomery County"
+combo_fb_out[combo_fb_out==24033] <- "Prince George's County"
+combo_fb_out <- combo_fb_out %>%
+  rename(County=geo_value)
+
+combo_jhu_deaths <- full_join(vis_pg_jhu_deaths, vis_moco_jhu_deaths, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_jhu_deaths[combo_jhu_deaths==24031] <- "Montgomery County"
+combo_jhu_deaths[combo_jhu_deaths==24033] <- "Prince George's County"
+combo_jhu_deaths <- combo_jhu_deaths %>%
+  rename(County=geo_value)
+
+combo_jhu_prop <- full_join(vis_pg_jhu_prop, vis_moco_jhu_prop, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_jhu_prop[combo_jhu_prop==24031] <- "Montgomery County"
+combo_jhu_prop[combo_jhu_prop==24033] <- "Prince George's County"
+combo_jhu_prop <- combo_jhu_prop %>%
+  rename(County=geo_value)
+
+combo_hhs_hospital <- full_join(vis_pg_hhs_hospital, vis_moco_hhs_hospital, by= c("data_source","signal", "geo_value", "time_value", "value", "sample_size"))
+combo_hhs_hospital[combo_hhs_hospital==24031] <- "Montgomery County"
+combo_hhs_hospital[combo_hhs_hospital==24033] <- "Prince George's County"
+combo_hhs_hospital <- combo_hhs_hospital %>%
+  rename(County=geo_value)
 ```
 
 The Census ACS 2020 data provides data on racial makeup of each of our counties. For this study we looked at White, Black and Latino. In order to see the difference in racial proportions across counties the data needed to be combined and reshaped. After this reshaping we can see in the bar graph below that the proportion of Latino population is similar between the counties. But the relative proportions of Black and White populations differs significantly.
@@ -295,123 +360,67 @@ mutate(prop_white=White/pop,
 
 ### Analysis
 
-```{r}
-census_race <- ggplot() + geom_bar(data=census_pg_prop, aes(prop_white),color="blue") + geom_bar(data=census_pg_prop, aes(prop_black),color="blue") + geom_bar(data=census_pg_prop, aes(prop_latino),color="blue") + geom_bar(data=census_moco_prop, aes(prop_white),color="black") + geom_bar(data=census_moco_prop, aes(prop_black),color="black") + geom_bar(data=census_moco_prop, aes(prop_latino),color="black") +coord_flip()
-census_race
-```
-
-
 For all of the gathered variables I looked at the rate of them over time compared between the two counties. The Facebook survey data as a whole tends to look more erratic than the other data sources. This is most likely a result of how the survey was conducted and the estimation process used for the data.
 
 First we have the positive proportion of PCR tests for both Prince George's County and Montgomery County. At all times the Prince George's line is higher than the Montgomery line. In addition, two of the times we see a spike in the Montgomery line, mid-October and mid-November, we see a correlating larger spike in the Prince George's line. There is a spike in early December for Montgomery that is not reciprocated by Prince George's but this could be a result of the very large spike for Prince George's in late November leading to under-testing in early to mid December. Throughout the time period we see Prince George's having a higher proporiton of positive PCR tests, which should correlate with a higher rate of COVID-19.
 
 ```{r}
 #Graph of PCR positive proportion over time for Prince George's County vs Montgomery County
-pos_pg <- pg_pcr_pos %>%
-  group_by(time_value, value)
-pos_moco <- moco_pcr_pos %>%
-  group_by(time_value, value)
-pos <- ggplot()+geom_line(data=pos_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=pos_moco, aes(time_value,value), color="black") + labs(title= "PCR Positive Test Proportion Over Time")
+pos <- ggplot(data=combo_pcr_pos, aes(time_value,value))+geom_line(data=combo_pcr_pos, aes(color=County)) +  labs(title= "PCR Positive Test Proportion Over Time")
 pos
 
 ```
 In comparison with the PCR proportion, the estimated proportion of people with COVID-like illnesses from the Facebook survey shows the two counties closer together for large section of the three month period. We do still see areas where Prince George's county is higher, early to mid October and both early and mid December, but outside of those the lines are much closer to each other.
 
 ```{r}
-fb_pg <- pg_fb_pos %>%
-  group_by(time_value, value)
-fb_moco <- moco_fb_pos %>%
-  group_by(time_value, value)
-pos_fb <- ggplot()+geom_line(data=fb_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=fb_moco, aes(time_value,value), color="black") + labs(title= "Estimated Proportion of People with COVID-like Illnesses")
+pos_fb <- ggplot(data=combo_fb_pos, aes(time_value,value))+geom_line(data=combo_fb_pos, aes(color=County)) + labs(title= "Estimated Proportion of People with COVID-like Illnesses")
 pos_fb
 ```
 With percentage of people who used public transit in the past day we see a graph where neither county is consistently on top. At times residents in Prince George's county look to ride public transit more and at other times residents in Montgomery county look to ride it more. As such this does not appear to be a good metric to judge the effects of COVID-19 by.
 
 ```{r}
-bus_pg <- pg_fb_bus %>%
-  group_by(time_value, value)
-bus_moco <- moco_fb_bus %>%
-  group_by(time_value, value)
-bus <- ggplot()+geom_line(data=bus_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=bus_moco, aes(time_value,value), color="black") + labs(title= "Percentage of Respondents Who Used Public Transit in the Past 24 Hours")
+bus <- ggplot(data=combo_fb_bus, aes(time_value,value))+geom_line(data=combo_fb_bus, aes(color=County)) + labs(title= "Percentage of Respondents Who Used Public Transit in the Past 24 Hours")
 bus
 ```
 The variable looking at the percentage of respondents who felt anxious over the past 5 days differs from my hypothesis. I had assumed that we would see higher feelings of anxiety for those in Prince George's county due to lower median household income and the effects of systemic racism [@Gravlee2020]. Instead we see residents of Montgomery county showcasing higher feelings of anxiety relatively consistently. 
 
 ```{r}
-anxious_pg <- pg_fb_anxious %>%
-  group_by(time_value, value)
-anxious_moco <- moco_fb_anxious %>%
-  group_by(time_value, value)
-anxious <- ggplot()+geom_line(data=anxious_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=anxious_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Felt Anxious \nOver the Past 5 Days")
+anxious <- ggplot(data=combo_fb_anxious, aes(time_value,value))+geom_line(data=combo_fb_anxious, aes(color=County)) + labs(title= "Estimated Percentage of Respondents Who Felt Anxious \nOver the Past 5 Days")
 anxious
 ```
 Across both counties we see high masking percentages. At various points both counties are masking more than the other but throughout the time period both are masking at an estimated 91% or better. 
 
 ```{r}
-mask_pg <- pg_fb_mask %>%
-  group_by(time_value, value)
-mask_moco <- moco_fb_mask %>%
-  group_by(time_value, value)
-mask <- ggplot()+geom_line(data=mask_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=mask_moco, aes(time_value,value), color="black") + labs(title= "Estimated Percentage of Respondents Who Masked for Most \nof the Past 5 Days")
+mask <- ggplot(data=combo_fb_mask, aes(time_value,value))+geom_line(data=combo_fb_mask, aes(color=County)) + labs(title= "Estimated Percentage of Respondents Who Masked for Most \nof the Past 5 Days")
 mask
 ```
 Over time both counties have a smaller percentage of residents working or going to school outside their home. But within that trend Prince George's county residents were outside their home for work or school more than Montgomery especially within the period of mid-November to mid-December.
 
 ```{r}
-out_pg <- pg_fb_out %>%
-  group_by(time_value, value)
-out_moco <- moco_fb_out %>%
-  group_by(time_value, value)
-out <- ggplot()+geom_line(data=out_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=out_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who Worked or Went to School \nOutside their Home")
+out <- ggplot(data=combo_fb_out, aes(time_value,value))+geom_line(data=combo_fb_out, aes(color=County)) + labs(title= "Est. Percentage of Respondents Who Worked or Went to School \nOutside their Home")
 out
 ```
 Residents of Prince George's county were more worried about their finances than those in Montgomery county. The spikes seem to correlate to the spikes shown in PCR positive tests as well for Prince George's county.
 
 ```{r}
-money_pg <- pg_fb_money %>%
-  group_by(time_value, value)
-money_moco <- moco_fb_money %>%
-  group_by(time_value, value)
-money <- ggplot()+geom_line(data=money_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=money_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of Respondents Who are Worried \nabout their Finaces Next Month")
+money <- ggplot(data=combo_fb_money, aes(time_value,value))+geom_line(data=combo_fb_money, aes(color=County)) + labs(title= "Est. Percentage of Respondents Who are Worried \nabout their Finaces Next Month")
 money
 ```
 Both counties experience an increase in new hospital admissions over the time period, starting at approximately 5% at the start and between 11% to 16% towards the end. Within the time period we can see two major spikes for Prince George's county, in late-October and mid-December, with only the later spike being represented in Montgomery county as well.
 
 ```{r}
-hospitals_pg <- pg_hhs_hospital %>%
-  group_by(time_value, value)
-hospitals_moco <- moco_hhs_hospital %>%
-  group_by(time_value, value)
-hospitals <- ggplot()+geom_line(data=hospitals_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=hospitals_moco, aes(time_value,value), color="black") + labs(title= "Est. Percentage of New Hospital Admissions with \nCOVID-Associated Diagnoses")
+hospitals <- ggplot(data=combo_hhs_hospital, aes(time_value,value))+geom_line(data=combo_hhs_hospital, aes(color=County)) + labs(title= "Est. Percentage of New Hospital Admissions with \nCOVID-Associated Diagnoses")
 hospitals
 ```
 For cumulative death rates, both counties follow roughly the same slope trajectory with Montgomery county having a consistently higher cumulative death toll throughout the time period. 
 ```{r}
-deaths_pg <- pg_jhu_deaths %>%
-  group_by(time_value, value)
-deaths_moco <- moco_jhu_deaths %>%
-  group_by(time_value, value)
-deaths <- ggplot()+geom_line(data=deaths_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=deaths_moco, aes(time_value,value), color="black") + labs(title= "Cumulative number of confirmed deaths due to COVID-19")
+deaths <- ggplot(data=combo_jhu_deaths, aes(time_value,value))+geom_line(data=combo_jhu_deaths, aes(color=County)) + labs(title= "Cumulative number of confirmed deaths due to COVID-19")
 deaths
 ```
 When adjusted to per 100,000 people we see that Prince George's county has the higher death rate throughout the time period.
 
 ```{r}
-prop_pg <- pg_jhu_prop %>%
-  group_by(time_value, value)
-prop_moco <- moco_jhu_prop %>%
-  group_by(time_value, value)
-prop <- ggplot()+geom_line(data=prop_pg, aes(time_value,value), color="blue") + 
-  geom_line(data=prop_moco, aes(time_value,value), color="black") + labs(title= "Cumulative number of confirmed deaths due to COVID-19,\n per 100,000 population")
+prop <- ggplot(data=combo_jhu_prop, aes(time_value,value))+geom_line(data=combo_jhu_prop, aes(color=County)) + labs(title= "Cumulative number of confirmed deaths due to COVID-19,\n per 100,000 population")
 prop
 ```
 
